@@ -10,3 +10,5 @@ git status  // to view files in staging area
 git commit -m 'first version'  //commit to local 
 git log
 git push //push the code to github
+
+........
