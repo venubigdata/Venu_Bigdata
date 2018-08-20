@@ -1,0 +1,5 @@
+1) While installing scala, make sure that you put installation path which contains no foldername with spaces.
+(Ex : Not in(C:\ Prog file) but in C:\Progfile).
+
+
+

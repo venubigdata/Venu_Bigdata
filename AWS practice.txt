@@ -1,0 +1,127 @@
+AWS - Cfamily computer - Youtube
+
+AMI - Amazon Machin Instance
+
+1.RAM 1GB
+2.CPU 1processor 
+
+1 and 2 comes under EC2(Elastic Cloud compute)
+
+3. 30GB storage 
+
+3 comes under EBS - Elastci Block Store
+
+
+t2.micro is the one which manages 1,2 and 3.
+
+
+Tenancy has two types.
+
+Shared Tenancy 		Dedicated tenancy 
+
+free tier eligible(less price)		charges are high
+
+for any instance(machine..physical or virtual)
+
+werequire RAM, processor, IP address, storage
+
+except storage, all resources will be shared once we shut down in shared tenancy
+
+Elastic IP(IP is permanent,chargeable mthly)-> we can use this to shared or dedicated tenancy
+
+In dedicated, resources are permanent including IP
+
+
+S3 - Storage Service in AWS
+
+-supports Unlimited storage
+-For backup storage
+-Supports any kind of file system/files
+
+
+ELB - Elastic Load Balancing
+ELB manages load and sends requests to servers which are idle or less busy
+
+Auto Scaling - 
+
+
+We configure Auto scaling to ELB
+
+Ex: If server reaches 90% of capacity then create an instance to ELB and if load is reduced then remove new server
+
+
+Pros - Cost cutting
+
+VPC : Virtual Private Cloud
+
+We can create own private cloud in Amazon
+
+In VPC, we can set our own private network
+
+Route53:
+
+DNS service in AWS
+
+IP to Hostname and Hostname to IP
+
+
+EC2 == Elastic Cloud Computing
+
+1. How to launch instances(Linux, Windows)
+2. How to access Instance
+3. Creating AMI(Amazon Machine Instance)
+4. Taking Snapshot
+
+To get  the same type of instance we use AMI
+
+It reduces creation/install time
+
+go to AWS.AMAZON.com
+
+Account ID : 249418148934 
+Account name : venu_ezgiri
+
+
+1) Select OS in AWS
+2) Select Instance
+	RAM-4GB
+	CPU
+by default t2.micro-> 1GB RAM and 1CPU   
+
+
+2) Accessing Instance
+
+1. Putty(Internally uses SSH)
+2. Install Linux
+  SSH
+3. Install Git 
+   SSH
+
+
+AWS Cloud Fomration  
+
+-> It is Automation in AWS
+We can automate almost all the services in AWS
+We write JSON or YAML scripts to create an EC2 instance
+AWS provides templates for us 
+We ca write scripts using these templates
+We submit these scripts then cloud formation creates an instance
+
+Eg : I want to create EC2 instance for REDHAT linux 7 and type is t2.micro  -- free inst
+assign def sec group
+
+Under Management tools-> Cloud formation
+
+
+
+
+
+
+
+
+
+
+
+
+
+

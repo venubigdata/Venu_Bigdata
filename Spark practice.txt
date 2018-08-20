@@ -1,0 +1,409 @@
+scala> e.collect
+<console>:26: error: not found: value e
+              e.collect
+              ^
+
+scala> val e = sc.textFile("Venu_HDFS/emp")
+e: org.apache.spark.rdd.RDD[String] = Venu_HDFS/emp MapPartitionsRDD[1] at textF                                               ile at <console>:27
+
+scala> e.collect
+res1: Array[String] = Array(101,Venu,50000,m,12, 102,Anu,40000,f,12, 103,Bhoomi,                                               30000,f,11)
+
+scala> //select dno, sex , sum(sal) from emp group by sex;
+
+
+scala> e.collect.foreach(println)
+101,Venu,50000,m,12
+102,Anu,40000,f,12
+103,Bhoomi,30000,f,11
+
+scala> //select dno, sex , sum(sal) from emp group by sex;
+
+
+scala> //pair rdd
+
+       ^
+
+scala> val pair = e.map{x=>
+     |     val w = x.split(",")
+     |     val dno = w(4)
+     |     val sex = w(3)
+     |     val sal = w(2).toFloat
+     |     val mykey = (dno,sex)
+     |     (mykey,sal)
+     | }
+pair: org.apache.spark.rdd.RDD[((String, String), Float)] =                                                                    MapPartitionsRDD[2] at map at <console>:29
+
+scala> pair.collect.foreach(println)
+((12,m),50000.0)
+((12,f),40000.0)
+((11,f),30000.0)
+
+scala> val res = pair.reduceByKey(_+_)
+res: org.apache.spark.rdd.RDD[((String, String), Float)] = S                                                                   huffledRDD[3] at reduceByKey at <console>:31
+
+scala> res.collect.foreach(println)
+((11,f),30000.0)
+((12,f),40000.0)
+((12,m),50000.0)
+
+scala> e.partitions.size
+res6: Int = 1
+
+scala> //no.of partitions = no.of unique blocks
+
+scala>  e.take(1)
+res7: Array[String] = Array(101,Venu,50000,m,12)
+
+scala> e.persist
+res8: e.type = Venu_HDFS/emp MapPartitionsRDD[1] at textFile                                                                    at <console>:27
+
+scala> e.collect
+res9: Array[String] = Array(101,Venu,50000,m,12, 102,Anu,400                                                                   00,f,12, 103,Bhoomi,30000,f,11)
+
+scala> val arr = e.map(x=>x.split(","))
+arr: org.apache.spark.rdd.RDD[Array[String]] = MapPartitions                                                                   RDD[4] at map at <console>:29
+
+scala> val pairsexsal = arr.map(x=>x(3),x(2).toInt)
+<console>:31: error: too many arguments for method map: (f:                                                                    Array[String] => U)(implicit evidence$3: scala.reflect.Class                                                                   Tag[U])org.apache.spark.rdd.RDD[U]
+         val pairsexsal = arr.map(x=>x(3),x(2).toInt)
+                                 ^
+
+scala> val pairsexsal = arr.map(x=>(x(3),x(2).toInt))
+pairsexsal: org.apache.spark.rdd.RDD[(String, Int)] = MapPar                                                                   titionsRDD[5] at map at <console>:31
+
+scala> val max = pairsexsal.reduceByKey(x=> x.Math.max())
+<console>:33: error: missing parameter type
+         val max = pairsexsal.reduceByKey(x=> x.Math.max())
+                                          ^
+
+scala> val max = pairsexsal.reduceByKey(Math.max(_,_))
+max: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[6                                                                   ] at reduceByKey at <console>:33
+
+scala> pairsexsal.cache
+res10: pairsexsal.type = MapPartitionsRDD[5] at map at <cons                                                                   ole>:31
+
+scala> val sum = pairsexsal.reduceByKey(_,_)
+<console>:33: error: missing parameter type for expanded fun                                                                   ction ((x$1, x$2) => pairsexsal.reduceByKey(x$1, x$2))
+         val sum = pairsexsal.reduceByKey(_,_)
+                                          ^
+<console>:33: error: missing parameter type for expanded fun                                                                   ction ((x$1: <error>, x$2) => pairsexsal.reduceByKey(x$1, x$                                                                   2))
+         val sum = pairsexsal.reduceByKey(_,_)
+                                            ^
+
+scala> val sum = pairsexsal.reduceByKey(_+_)
+sum: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[7                                                                   ] at reduceByKey at <console>:33
+
+scala> pairsexsal.collect
+res11: Array[(String, Int)] = Array((m,50000), (f,40000), (f                                                                   ,30000))
+
+scala> sum.collect
+res12: Array[(String, Int)] = Array((f,70000), (m,50000))
+
+scala> max.collect
+res13: Array[(String, Int)] = Array((f,40000), (m,50000))
+
+scala> //converted results are stored into tuple format
+
+scala> //convert these tuples into string format to use in R                                                                   DBMS
+
+scala> val tsum = sum.map(x=>x._1+"\t"+x._2)
+tsum: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[8]                                                                    at map at <console>:35
+
+scala> tsum.collect
+res14: Array[String] = Array(f  70000, m        50000)
+
+scala> tsum.saveAsTextFile("Venu_HDFS/tsum")
+
+scala> def pairToString(x:(String,Int),delim:String)={
+     |          val a = x._1
+     |          val b = x._2
+     |          a+del+b
+     | }
+<console>:28: error: not found: value del
+                a+del+b
+                  ^
+
+scala> def pairToString(x:(String,Int),delim:String){
+     |     val a = x._1
+     |     val b = x._2
+     |     (a+delim+b)
+     | }
+pairToString: (x: (String, Int), delim: String)Unit
+
+scala> sum.map(x=>pairToString(x,"\t"))
+res16: org.apache.spark.rdd.RDD[Unit] = MapPartitionsRDD[10]                                                                    at map at <console>:38
+
+scala> val sum1 = sum.map(x=>pairToString(x,"\t"))
+sum1: org.apache.spark.rdd.RDD[Unit] = MapPartitionsRDD[11]                                                                    at map at <console>:37
+
+scala> sum1.collect
+res17: Array[Unit] = Array((), ())
+
+scala> sum.collect
+res18: Array[(String, Int)] = Array((f,70000), (m,50000))
+
+scala> def pairToString(x:(String,Int),delim:String)={
+     |     val a = x._1
+     |     val b = x._2
+     |     (a+delim+b)
+     | }
+pairToString: (x: (String, Int), delim: String)String
+
+scala> val sum1 = sum.map(x=>pairToString(x,"\t"))
+sum1: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[12                                                                   ] at map at <console>:37
+
+scala> sum1.collect
+res19: Array[String] = Array(f  70000, m        50000)
+
+scala> e.collect
+res20: Array[String] = Array(101,Venu,50000,m,12, 102,Anu,40                                                                   000,f,12, 103,Bhoomi,30000,f,11)
+
+scala> val grp = e.groupByKey()
+<console>:29: error: value groupByKey is not a member of org                                                                   .apache.spark.rdd.RDD[String]
+         val grp = e.groupByKey()
+                     ^
+
+scala> val grp = emp.groupByKey()
+<console>:25: error: not found: value emp
+         val grp = emp.groupByKey()
+                   ^
+
+scala> val grp = sum.groupByKey()
+grp: org.apache.spark.rdd.RDD[(String, Iterable[Int])] = Map                                                                   PartitionsRDD[13] at groupByKey at <console>:35
+
+scala> grp.collect
+res21: Array[(String, Iterable[Int])] = Array((f,CompactBuff                                                                   er(70000)), (m,CompactBuffer(50000)))
+
+scala> val grp = paisexsal.groupByKey()
+<console>:25: error: not found: value paisexsal
+         val grp = paisexsal.groupByKey()
+                   ^
+
+scala> val grp = pairsexsal.groupByKey()
+grp: org.apache.spark.rdd.RDD[(String, Iterable[Int])] = Shu                                                                   ffledRDD[14] at groupByKey at <console>:33
+
+scala> grp.collect
+res22: Array[(String, Iterable[Int])] = Array((f,CompactBuff                                                                   er(40000, 30000)), (m,CompactBuffer(50000)))
+
+scala> val res = grp.map{x=>
+     |     val sex = x._1
+     |     val cb  = x._2
+     |     val tot = cb.sum
+     |     val max = cb.max
+     |     val cnt = cb.size
+     |     val avg = tot/cnt
+     |     val r = sex+","+tot+","+max+","+cnt+","+avg
+     | }
+res: org.apache.spark.rdd.RDD[Unit] = MapPartitionsRDD[15] a                                                                   t map at <console>:37
+
+
+
+val res = e.map{x=>
+     |          val w = x.trim().split(",")
+     |          val id = w(0)
+     |          val name = w(1).toLowerCase
+     |          val fc = name.slice(0,1).toUpperCase
+     |          val rc = name.slice(1,name.size)
+     |          val sal = w(2).toInt
+     |          val grade = if (sal >= 40000) "A" else
+     |                          if (sal>=30000) "B" else "C"
+     |          val dno = w(4).toInt
+     |          val dname = dno match{
+     |                      case 11 => "Marketing"
+     |                      case 12 => "Hr"
+     |                      case other => "Others"
+     |          }
+     |          var sex = w(3).toLowerCase
+     |          sex = if (sex=="f") "Female" else "Male"
+     |          val Name = fc+rc
+     |          List(id,Name,w(2),grade,sex,dname).mkString("\t")
+     |       }
+
+
+
+
+
+
+SPARK SQL:
+
+Spark SQL is not a database.
+Data objects in Spark are RDDs.
+Spark use RDD API to process.
+Spark sql is a library to process spark data objects using sql statements.
+
+In Spark, 4 types of context
+
+SparkStreaming context
+Spark context
+SQL context 
+Hive Context
+
+Spark SQL-> 2contexts
+
+sqlcontext
+hivecontext
+
+import org.apache.spark.sql.SqlContext
+
+val sqlcon = new SqlContext(sc)
+
+from Spark 1.6 onwards, spark-shell provides sqlcontext
+
+We use sqlcontext to process spark objects using statements
+
+hive context can integrate Hive with Spark
+
+Hive is a datawarehousing hadoop framework & stored and managed by hive(tables)
+
+Hadoop Hive and Spark Hive
+
+Hive-> background Mapreduce
+Spark Hive -> Spark with inmemory and DAG features with persistence features which is more faster than MR.
+
+
+Spark sql limitation:
+
+Applicable to only structured text
+
+if data is unstructured, need to process with spark core RDD API and spark mllib,nlp algorithms
+
+
+import org.a	pache.spark.sql.hive.HiveContext
+
+
+
+
+
+
+
+Steps to work with SQL context 
+
+import org.apache.spark.sql.SQLContext
+// when we convert RDDs implicitly into Dataframe
+
+import sqlContext.implicits._
+
+
+val sqc = new SQLContext(sc) 
+
+
+ 
+1) Load data into RDD
+   file name : file1
+   
+val data = sc.textile("/user/cloudera/Venu_HDFS")
+
+2) Provide schema to the RDD
+
+create case class 
+case class Rec(a:Int, b:Int, c: Int)
+
+3) Create a function to convert raw line into case object
+
+def makeRec(line: String)={
+	val w = line.split(",")
+	val a = w(0).toInt
+	val b = w(1).toInt
+	val c = w(2).toInt
+	val r = Rec(a,b,c)
+	r
+    }
+
+  4) Transform each record into case Object
+
+val recs = data.map(x=> makeRec(x))
+
+5) convert rdd into dataframe
+
+val df = recs.toDF
+
+6) create table instance for the dataframe
+
+df.registerTempTable("samp")
+
+7) then we can play sql statements
+
+val r1 = sqc.sql("select a+b+c as tot from samp")
+
+r1-> dataframe
+
+To apply sql statements on result set/data frame, we need to  register it as temp table
+
+r1.registerTempTable(samp1)
+
+
+
+Spark Hive:
+
+copy hive-site.xml into /usr/spark/conf
+
+
+scala> import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.sql.hive.HiveContext
+
+scala> val hc = new HiveContext(sc)
+hc: org.apache.spark.sql.hive.HiveContext = org.apache.spark.sql.hive.HiveContext@34e71c72
+
+scala> hc.sql("create database myspark")
+res28: org.apache.spark.sql.DataFrame = [result: string]
+
+hive> show databases;
+OK
+default
+myspark
+Time taken: 1.13 seconds, Fetched: 2 row(s)
+hive>
+
+hive> use myspark;
+OK
+Time taken: 0.618 seconds
+hive> create table raw(line string);
+OK
+Time taken: 0.51 seconds
+hive> load data local inpath 'json1' into raw;
+FAILED: ParseException line 1:36 missing TABLE at 'raw' near '<EOF>'
+hive> load data local inpath 'json1' into table raw;
+Loading data to table myspark.raw
+Table myspark.raw stats: [numFiles=1, totalSize=92]
+OK
+Time taken: 0.727 seconds
+hive> create table info(name string, age int, city string);
+OK
+Time taken: 0.136 seconds
+hive> select get_json_object(line,'$.name') from raw;
+OK
+Ravi
+Rani
+Mani
+Time taken: 0.591 seconds, Fetched: 3 row(s)
+hive>select get_json_object(line,'$.name'),
+get_json_object(line,'$.age'),
+get_json_object(line,'$.city') from raw;
+
+
+Datasets: 
+
+Use Catalyst optimizer along with Tungsten Optimizer
+
+Both RDD and DF use inmemory comp
+
+Tungsten use CPU caches along with inmemory computing
+[L1/L2/L3 caches]
+
+computing using CPU caches is very faster than inmemory computing
+
+speed of CPU cache > speed of inmemory > speed of disk computing
+
+
+
+
+
+IntelliJ - SBT
+
+SBT version - 0.13.17
+Scala version 2.11.12
+JDK 1.8
+
+
+

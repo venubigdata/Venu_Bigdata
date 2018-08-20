@@ -1,0 +1,202 @@
+To import from DB2 to Hadoop :
+
+$SQOOP_HOME/bin/sqoop import --connect jdbc:db2://db2.my.com:50000/testdb --username db2user --password db2pwd --table db2tbl
+        --split-by tbl_primarykey --target-dir sqoopimports
+
+Sqoop internally uses boundary query to decide the no. of rows and how to split them into default 4 mappers
+
+
+
+Get and process oracle data using Spark
+
+spark-shell --driver-class-path ojdbc6.jar 
+--jar ojdbc6.jar
+--packages com.databricks:spark_csv_2.10:1.4.0
+
+1)First download Oracle JAR from oracle webite
+OJDBC6.jar
+2)val DETAILS = sqlContext.load("jdbc", Map("url" -> "jdbc:oracle:thin:hadoopdb/hadoopdb@//....","dbtable" -> "SAMPLETABLE"))
+
+
+DETAILS.select("firstname").show()
+
+
+
+
+Sqoop:
+
+Sql + Hadoop
+
+two tools : import and export(basic tools)
+
+import-RDBMS to Hadoop
+export- HDFS to RDBMS
+
+export is not reqd for Tableau
+
+sqoop can import from rdbms to hdfs,hive or hbase
+but cannot export from hbase to rdbms
+
+two solutions for export from hbase to rdbms
+
+1) Hive & hbase integration
+2) HBase API--API is available in Java, Scala, python
+
+
+options:
+
+1) --connect :
+
+to specify connetion URI of database(source)
+
+shape : 
+
+<driver>:<RDBMSname>://<hostname>:<portnumber>/<dbname>
+
+<driver>--> DBdriver
+
+jdbc:oracle://IBM-slaesdb:30656/salesdb
+
+as we have client and server in same machine
+
+--connect jdbc:mysq;://localhost/mydb
+--username dev1  //username of database(eg: mysql)
+--password a123
+--table emp   //from mydb database 
+-m 1 //sub option for table
+--target-dir import1
+--where "sex=m"//conditional filter(matching rows to criteria) to filter rows
+//quotes are must,if condition is enclosed in single quotes then outer quotes should be double quotes, if inner quotes are double quotes then outer should be single quotes
+eg: "sex='m'" or 'sex="m"'
+eg : "sal >= 5000 and sex = 'f'"
+can import all columns from table, but we can set columns 
+--columns name, sal //sal*0.1 will not work,in columns we cannot apply any expressions, even upper(name) or substr, to chieve this we write query
+--query 'select * from emp where $CONDITIONS' //single or double quote is fine, where is mandatory and $CONDITIONS(boolean, default false), $CONDITIONS will verify the given expressions in query then it will give true then query executed by RDBMS(not sqoop), 
+once query is executed then the result set will be imported by sqoop, 
+mapper is 1 here because the result set doesnot have primary key(table in RDBMS may have it but result of query will not have primary key)
+ 
+
+--table and --query are mutually exclusive(only one should exist)
+
+--append  //to write into existed dir
+--hive-import
+--hive-table emp //no database mention so it will be in default db, 
+
+
+suppose:
+oracle sales db host : 192.300.400.53
+port : 1563
+
+
+
+$sqoop import --connect jdbc:oracle://192.300.400.53:1563/salesdb
+--username cloudera
+--password xyz123
+--table sales -m 2
+--hive-import 
+--hive-table salestrans.sales  //same columns in same format and sequence in columns
+
+--query 'select pid,cid,amt from sales where $CONDITIONS'  -m 1
+--hive-import --hive-table salestrans.sales
+--fields-terminated-by '\t'
+
+give \ to enter command in next line
+
+
+
+but his approach is not recommended for tera bytes of data tables
+
+the above is ETL approach, but we should follow ELT approach, first into HDFS then tranform into reqd things
+
+
+Import into Hbase:
+
+$sqoop import --connect jdbc:db2://192.128.138.33/salesdb
+--username venu
+--password venu
+--table sales
+--hbase-table HTab
+--columns id,name,sal,city   //id will be row key...rem columns will be column family
+--column-family
+--hbase-create-table
+
+
+
+
+$mysql
+$mysql -uroot -pcloudera //no spaces between uand username , p and pwd in Cloudera VM
+$show databases;
+$create database practice;
+use practice;
+create table info(id int primary key, name char(10), sal int, sex char(1), dno int);
+insert into info values(101,'aaaa',10000,'m',11);
+insert into info values(102,'baaa',2000,'f',12);
+insert into info values(103,'baaaav',30000,'f',12);
+insert into info values(104,baaaaava,40000,'m',12);
+insert into info values(105,'gaaaava',90000,'m',13);
+insert into info values(107,'daaaaga',210000,'m',13)
+
+
+Note: You should always exit from mysql when you run sqoop(common mistake you do tis from sqoop, but need to do it from out of mysql)
+
+Note: We should give condition in quotes
+eg: --where 'sal>100'
+
+Note: we should not give conditions in column names(eg: sal*0.1)  => Imported failed : column name 'sal*0.1' not found in table 
+
+$sqoop import --connect jdbc:mysql://localhost/practice
+--username root
+--password 
+--table info
+--target-dir import1
+
+
+
+
+
+
+Export:
+
+
+$sqoop export --connect jdbc:mysql://oracle:3030/mydb
+--username venu
+--password b123
+--table mytab
+--export-dir 'HDFs1'
+--input-fields-terminated-by '\t'
+  
+
+
+
+
+
+default mapper tasks are 4
+
+adv of multiple mappers:
+if 1 mapper can execute 1 task in an hour, 4 mappers will be in 15min
+
+if table volume is less, we can say -m 2
+if table volume is high, we can say -m 10  //like accelarator for bike
+if table doesnot have primary key, no. of mappers should be 1
+
+if primary keys are not available multiple mappers are not allowed(though we can achieve by --split by), m2 or m3 will not have an option to start from which position so only m1 will run sequentially 
+
+we shoud have read permission from DBA for import
+we should have write permission from DBA to export into RDBMS
+
+In production, 1node will have around 16dbs, each db will have its port number
+
+
+
+Need to learn :
+
+--validate
+
+
+
+
+
+
+
+
+

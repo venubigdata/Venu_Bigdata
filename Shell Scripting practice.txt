@@ -1,0 +1,328 @@
+give output of one command's result to other command
+ls -ltr | grep hadoop  //searching for "hadoop" in the result of ls -ltr
+
+ITversity video 5 (Linux fundamentals for Bigdata)
+
+control arguments(starts with '-' hyphen) : 
+grep --help // to get list of all argumts
+-i //case insensitive
+-v //negation
+-iv //case insensitive with negation
+-c // count of num of lines matching that word
+wc -l // to get the num of records in a file
+grep closed part-00000 | wc -l // to get the num of word count for 'closed' in file part-00000
+wc -l */part* // to get the word count in all files and its total
+ls -l vs ls -lrt // ls -l will give results in sorted way Alphabetical -t(results will be sorted based on time modified)(-r)reverse the order
+ls -1 *.log //to search only the with the file name
+
+
+ 
+[cloudera@quickstart ~]$ find . -name "*.log" //to find filenames which contains .log
+./.local/share/gvfs-metadata/home-87854576.log
+./workspace/.metadata/.plugins/org.eclipse.m2e.logback.configuration/0.log
+[cloudera@quickstart ~]$ find . -name "*.log" -mtime -30 // to find filenames ends with .log which has been modified in last 30days
+./.local/share/gvfs-metadata/home-87854576.log
+[cloudera@quickstart ~]$ find . -name "*.log" -mtime -30 | xargs grep -i error  // give first commands output as arguments(input) to second command excluding file names(xargs)
+
+
+
+
+To search for a particular string in a file or dataset
+grep complete file_name  //search for "complete" in a file part-0000
+grep complete file_name |head //search only head of file like 10rows for "complete"
+grep -i COMPLETE file //search with ignore case
+grep -iv complete file//search with ignore case and exluding "complete"
+grep -iv complete$ file //search for "complete" in file at the end ($-> end)(^-> start)
+grep -w pending file //search for a word "pending" in any part of file(result will be purely "pending")
+grep pending file // search for a word 'pending' in file(results will have including pending_payment)
+
+
+$cat /etc/shells
+$which bash    // to know the location of bash
+$cd Desktop/
+$touch hello.sh
+$ls -al
+$gedit hello.sh 	//to edit hello.sh
+
+
+touch -> to create a new file //with no execute permission
+
+
+#! /bin/bash
+
+echo -e "enter a file name : \c"
+read file_name
+
+if [ -e $file_name ]   //spaces are recommended*
+then
+echo "$file_name exists"
+else
+echo "$file_name does not exist"
+fi
+
+-e // true if file exists 
+-f // true if regular file or vald file
+-d // directory
+-c // CLOB file
+-b // blob file like image, audio or video
+-s // empty or not
+-r // read permission
+-w // write permission
+-x // execute permission
+
+
+append output to end of file
+
+
+if [ -f $file_name ]
+then
+	if [ -w $file_name ]
+	then 
+		echo "Type some text or to quit enter Ctrl+D"
+		cat >> $file_name
+	else
+		echo "File does not have write permission"
+	fi
+	echo "$file_name does not exist"
+fi
+
+
+
+// chmod -w test  //to remove write permission for file
+
+//chmod +w test // to add write permission
+
+........................
+
+age = 25
+
+if ["$age" gt 18 ] && ["$age" lt 30]  // if ["$age" gt 10 -a "$age" lt 30] // we can use && in place of -a with two [[]]
+then
+echo "valid age"
+else
+echo "age not valid"
+fi
+
+
+//eq for equal, ge greater than or equal to
+// -o for OR or ||  
+
+
+Arith op
+
+echo 1+1 //takes as string
+num=1
+num1=9
+
+echo $(( num + num1 ))
+echo $(expr $num + num1 )  //for mul \* is must unlike simple + or *
+
+by default scripting doesnt support decimals
+
+num1 = 20.6
+num2 = 5
+
+echo "20.6+5" | bc
+echo "scale=2;20.5/5" | bc  //scale for decimal point values divided
+
+echo "$num1+$num2" |bc
+
+num = 27
+echo "scale=2:sqrt($num)" |bc -l   //for math functions
+
+man bc   // manual for list of commands
+
+
+vehicle=$1  // or read vehicle
+
+case $vehicle in
+	"car" )   // or [a-z] to take input from small a to z   //read wikipedia for Regular expressions
+		echo "Rent of $vehicle is 100" ;;
+	"truck" )   // or [A-Z] ; give LANG=C in main command line to accept caps letters then give caps
+		echo "$vehicle is truck" ;;
+	* )   //here ? accepts only 1 special char but * can take many chars
+		echo "unknow vehicle" ;;
+esac
+
+
+
+Arrays
+
+
+os = ('ubuntu' 'windows' 'kali')
+os[3]='mac   //for update os[0]='venu'
+echo "${os[@]}"
+echo "{os[1]}"
+echo "{#os[@]}"
+echo "{!os[@]}"
+unset os[0]  //to remove an element from an array
+
+
+string=ggdggdggdgsh
+echo "${string[@]}"  // input is take into string array at index 0 only
+
+
+#! /bin/bash
+
+#while loop
+
+n=1
+while [$n gt 3]
+
+do 
+	echo "$n"
+	n=$(( n+1 ))  // Ctrl+c to come out of script
+	gnome-terminal &  //to open a terminal
+	xterm  //for xterm terminal	
+	sleep 1   //pause for 1 sec 
+done
+
+
+Read a file content in Bash
+
+while read p
+do 
+	echo $p
+done < hello.sh   // giving input from hello.sh
+
+
+
+cat hello.sh | while read p    //hello.sh is input to p
+do
+	echo $p
+done
+
+
+ifs //internal field separator, works for indexes or line num in a file
+
+while IFS= read -r line    //space is imp here and -r will remove any backslashes or IFS = ' '
+do
+	echo $line
+done < hello.sh
+
+
+until loops
+
+n=1
+
+
+until [$n -ge 10]
+  //or >
+do
+	echo $n
+done
+
+for loops
+
+for i in 1 2 3 4   //not suitable for many numbers as we cannot type all  // for i in {1..10} works
+do
+	echo $i
+done
+
+for i in {1..10..2}   //only works for 4.3.11(1) major 4+ versions
+
+//echo ${BASH-VERSION}
+
+for (( i = 0; i<5 ; i++))
+do 
+	echo $i
+done
+
+for i in ls pwd date   //or for command in * to iterate over each and every file and dir in the present location
+do
+	echo "------$i--------"
+	$i
+done
+
+
+for item in *
+do
+	if [-d $item]   //checks input item is a dir or not, file/dir name should not have spaces
+	then
+	echo $item
+	fi
+done
+
+
+select name in mark john tom ben
+do 
+	echo "$name selected"
+done
+
+o/p :
+1) mark
+2) john
+3) tom
+4) ben
+#?  2  //give input here 2
+john selected
+
+
+select name in mark john
+do 
+	case $name in
+	mark)
+		echo mark selected ;;
+	*)
+		echo "error" ;;
+	esac
+done
+
+for(i....)
+do
+	if [ $i gt 5 ]
+	then
+	break   // abnormally stops after 5
+	continue  // skips 5
+	fi
+	echo "$i"
+done
+
+
+function Hello(){
+	echo $1
+}
+quit () {
+	exit
+}
+Hello 1   // 1 is argument for fnction
+Hello world  // printls world
+Hello hhhh //prints hhhh
+Hello hi dude // if $1 $2 in Hello function
+
+
+local variables
+
+function fun1(){
+local name = $1   //like local private
+echo "$name"
+}
+Hello   //calling function Hello
+
+
+is_file_exists(){
+local file = "$1"
+[[ -f "$file" ]] && return 0 || return 1
+
+}
+
+
+a = 31
+readonly a   
+a=30	//cannot modify value
+
+readonly -f func1()    // -f is needed for readonly functions
+
+readonly    //will give readonly builtin variables
+
+readonly -f    //lists readonly functions
+
+
+bash -x ./hello.sh    //to debug use -x
+
+
+#!/bin/bash -x // to debug inside script
+#!/bin/bash
+set -x   // debug option
+
+set +x   // to stop debug

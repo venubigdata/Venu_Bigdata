@@ -1,0 +1,3 @@
+To have access to hive metastore:
+
+invalidate metadata;

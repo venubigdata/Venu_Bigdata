@@ -1,0 +1,5 @@
+1) Versions from 2016 - 2018
+2) Diff between versions
+3) how many mappers?
+4) hive commands and daata are case sensitive
+5) JAR file 

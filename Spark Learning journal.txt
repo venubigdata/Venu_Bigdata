@@ -1,0 +1,87 @@
+We create programs and execute on spark cluster
+1) Interactive shells(scala shell, pyspark, notebooks)
+2) Submit a job (park submit utilty)
+
+How does spark execute prog on cluster?
+
+Master(Driver)-> Slaves(executor)
+
+Sub A1 -> Driver1 --- executors(n)
+sub A2 -> Driver2 --- exectr(n)
+
+Driver-> Analyze, Distribute, Schedule, Monitor
+
+Executor -> just executes and reports back to driver
+
+Who executes where?
+
+App(on client machine) 
+
+When we start an application we specify client mode or cluster mode
+
+executors will be in cluster
+
+we dont want dependency in prod, so we run in cluster mode
+
+for debugging-> we run driver locally 
+
+Spark-shell -> locally in same JVM
+
+
+How does spark execute prog on cluster?
+
+it depends on spark-submit in which mode
+
+
+Apache YARN
+Mesos
+Kubernetes(not in prod, working on it)
+Standalone
+
+Spark client tool(spark shell)-> automatically provides spark session and driver and exec in same machine
+
+In client mode-> starts in loc machine, req goes to yarn mgr to create yarn application, yarn res mgr starts app master(acts as executor launcher), AM request to res mgrfor further containers , RM allocates resources to containers(executors), then after initial set up executors directly communicate with Driver
+
+
+In cluster mode -> Request comes from spark-submit to YRM to create YARN application , yearn res mgr starts app master then App master starts Spark Driver (no dependency on local comp), next Driver will reach out to RM for allocation of resources(executors)
+
+
+local mode -> In spark JVM(Driver and executor runs in local machine)
+
+
+Why spark?
+
+1) Abstract parallel prog
+2) Unified platfrm(MAchine learning, Graphx,Streaming etc)
+3) Ease of use(comp to MR)
+
+
+Spark App process flow:
+
+RDD -> Distributed, partitioned, resilient, immutable, collection of data
+
+firstRDD.getNumPartitions //to get the num of partitions
+
+firstRDD.foreachPartition(p => println("No. of items in partition =" + p.count(y=>true)))
+
+1) Load data from source
+2) transformations
+
+C:\Users\ADMIN\AppData\Local\Google\Cloud_SDK
+
+$gcloud compute ssh --zone=us-east1-b --ssh-flag="-D" --ssh-flag="10000" --ssh-flag="-N" "spark1-m"
+
+-D -> Dynamic port forwarding
+-N -> Instruct Gcloud to not to open remote shell
+
+
+Ctrl+Shift+C -> Copy in Command lin
+Ctrl+Shft+V -> Paste
+
+To create SSH Key for an arbitrary user :
+
+ssh-keygen -t rsa -f ~/.ssh/venu-gcp-ssh-key -C venu
+
+
+/home/venuezgiri/.ssh/venu-gcp-ssh-key.pub
+

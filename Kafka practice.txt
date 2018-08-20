@@ -1,0 +1,86 @@
+Kafka -> Middleware -> Handles Streaming data + Message system/brokerage
+Existing Middle ware-> Rabbit MQ(distr), W(WebSphere)MQ, Web method , tibcor
+Kafka server like Hadoop-> Large distr system
+1000s of nodes in a Kafka cluster
+
+One appl comm with other appl through web service.
+If target system is busy then after few min request may be expired/transaction may be expired.
+
+Queue(other) -> Topic(in Kafka)
+
+Adv of Kafka:
+1) 100% msg delivery(Replication is available)
+2) large volumes of trans(Kafka cluster is distr so can expand)
+3) persistence of message system(in other sys too)(stores topic so that it can be fetched later when reqd)
+
+Kafka components:
+
+1) ZooKeeper
+2) Broker
+3) Topic
+4) Producer
+5) Consumer
+
+Zookeeper:
+
+Co-ordinator system which maintains 
+
+cluster state
+
+exchanges  info bw brokers(nodes)
+
+All brokers are connected to ZooKeeper:8082 => Cluster
+
+ZK:8082 has B1,B2
+ZK:8081 has B3,B4 => two clusters
+
+1 cluster = 1 server
+
+
+2) Broker
+
+1 broker as a server ---- each broker acts as Master and Slave
+
+multiple masters and slaves => eff load balancing
+1replica will act as lead replica from all replicas
+
+3) Topic is a message holding unit in Kafka(like table in RDBMS stores records)
+At the timing of creating topic, we have to choose how many no.of replicas 
+rec-> data line(in RDBMS)
+msg -> key value pair(key,dataline)
+
+4)
+5)
+
+Consumers will always read topics from lead replica only
+
+Producer API -> Publish topic to Consumer API
+
+All most all languages have Producer and Consumer APIs
+
+Replicas are not configured in Hadoop(Kafka is not part of Hadoop)
+
+We can alter the topic(thru command prompt also)
+
+If lead replica is down, then remaining brokers will have voting mechanism, then one best node/replica/broker will be elected as lead
+
+Topics are stored in disks because of persistence feature
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

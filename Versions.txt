@@ -1,0 +1,25 @@
+Apache Spark 2.2.0
+Apache Hadoop 2.8.1
+Apache Pig 0.16.0
+Apache Hive 2.1.1
+GCS connecotr 1.6.1
+
+
+GCS(Google Cloud Storage)
+Dataproc
+
+Resource Manager : 8088
+Spark Web UI : http://ADMIN-PC:4040
+Jupiter : 8123
+
+
+
+
+Spark 2.2.1
+Scala 2.11.8
+Hive 1.2.1
+Sqoop 1.4.6
+Oozie 3.3.2
+Hadoop 2.4.1
+
+
