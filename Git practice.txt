@@ -1,1 +1,12 @@
 Git Tutorial(code basics youtube)
+
+Clone/Copy to local comp
+click on clone/donwload to copy the clone link
+in git bash:
+$git clone paste_the_link_here
+$git status //for any chnages
+git add first.scala
+git status  // to view files in staging area
+git commit -m 'first version'  //commit to local 
+git log
+git push //push the code to github
