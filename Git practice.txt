@@ -12,3 +12,5 @@ git log
 git push //push the code to github
 
 ........
+
+To test the commits and versioning
