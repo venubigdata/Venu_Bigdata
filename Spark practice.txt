@@ -1,7 +1,4 @@
-scala> e.collect
-<console>:26: error: not found: value e
-              e.collect
-              ^
+
 
 scala> val e = sc.textFile("Venu_HDFS/emp")
 e: org.apache.spark.rdd.RDD[String] = Venu_HDFS/emp MapPartitionsRDD[1] at textF                                               ile at <console>:27
@@ -64,10 +61,6 @@ res9: Array[String] = Array(101,Venu,50000,m,12, 102,Anu,400                    
 scala> val arr = e.map(x=>x.split(","))
 arr: org.apache.spark.rdd.RDD[Array[String]] = MapPartitions                                                                   RDD[4] at map at <console>:29
 
-scala> val pairsexsal = arr.map(x=>x(3),x(2).toInt)
-<console>:31: error: too many arguments for method map: (f:                                                                    Array[String] => U)(implicit evidence$3: scala.reflect.Class                                                                   Tag[U])org.apache.spark.rdd.RDD[U]
-         val pairsexsal = arr.map(x=>x(3),x(2).toInt)
-                                 ^
 
 scala> val pairsexsal = arr.map(x=>(x(3),x(2).toInt))
 pairsexsal: org.apache.spark.rdd.RDD[(String, Int)] = MapPar                                                                   titionsRDD[5] at map at <console>:31
@@ -83,13 +76,6 @@ max: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[6                    
 scala> pairsexsal.cache
 res10: pairsexsal.type = MapPartitionsRDD[5] at map at <cons                                                                   ole>:31
 
-scala> val sum = pairsexsal.reduceByKey(_,_)
-<console>:33: error: missing parameter type for expanded fun                                                                   ction ((x$1, x$2) => pairsexsal.reduceByKey(x$1, x$2))
-         val sum = pairsexsal.reduceByKey(_,_)
-                                          ^
-<console>:33: error: missing parameter type for expanded fun                                                                   ction ((x$1: <error>, x$2) => pairsexsal.reduceByKey(x$1, x$                                                                   2))
-         val sum = pairsexsal.reduceByKey(_,_)
-                                            ^
 
 scala> val sum = pairsexsal.reduceByKey(_+_)
 sum: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[7                                                                   ] at reduceByKey at <console>:33

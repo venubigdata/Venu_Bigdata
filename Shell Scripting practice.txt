@@ -5,7 +5,7 @@ ITversity video 5 (Linux fundamentals for Bigdata)
 
 control arguments(starts with '-' hyphen) : 
 grep --help // to get list of all argumts
--i //case insensitive
+-i //ignore case
 -v //negation
 -iv //case insensitive with negation
 -c // count of num of lines matching that word

@@ -10,14 +10,4 @@ git status  // to view files in staging area
 git commit -m 'first version'  //commit to local 
 git log
 git push //push the code to github
-
-........
-
-To test the commits and versioning
-
-
-made a change here by Venu
-
-Create a new branch2(true)
-
-
+....
