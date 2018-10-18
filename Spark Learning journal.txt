@@ -58,7 +58,7 @@ Why spark?
 
 Spark App process flow:
 
-RDD -> Distributed, partitioned, resilient, immutable, collection of data
+RDD -> Distributed, partitioned, resilient, immutable collection of data
 
 firstRDD.getNumPartitions //to get the num of partitions
 

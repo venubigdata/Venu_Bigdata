@@ -99,8 +99,10 @@ $sqoop import --connect jdbc:oracle://192.300.400.53:1563/salesdb
 --query 'select pid,cid,amt from sales where $CONDITIONS'  -m 1
 --hive-import --hive-table salestrans.sales
 --fields-terminated-by '\t'
-
+--delete-target-dir    //to delete existing dir
 give \ to enter command in next line
+
+hadoop fs -getmerge /sqoop/target-dir/ /desired/local/output/file.txt  // to mergeall part files from target-dir to single file.txt
 
 
 
